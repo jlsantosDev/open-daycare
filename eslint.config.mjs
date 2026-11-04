@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Mockup support runtime — vendored reference files, never imported by the app.
+    "references/**",
   ]),
 ]);
 
