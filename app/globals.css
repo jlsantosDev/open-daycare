@@ -1,26 +1,81 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* Typography (wired to next/font variables in app/layout.tsx) */
+  --font-sans: var(--font-nunito, "Nunito"), system-ui, sans-serif;
+  --font-heading: var(--font-fredoka, "Fredoka"), system-ui, sans-serif;
+
+  /* Surfaces */
+  --color-background: #F6ECDF;
+  --color-surface: #FFFDF9;
+  --color-surface-border: #ECE0D0;
+
+  /* Text */
+  --color-heading: #3F362E;
+  --color-body: #4A4038;
+  --color-muted: #A89A8B;
+  --color-muted-strong: #94887B;
+  --color-nav: #6E6359;
+
+  /* Accent (coral) */
+  --color-accent: #D9583C;
+  --color-accent-soft: #E0654A;
+  --color-accent-strong: #C5503A;
+  --color-accent-soft-bg: #FBE3D8;
+  --color-gradient-from: #F4977E;
+  --color-gradient-to: #EE8164;
+  --color-avatar-gradient-from: #F8C3A8;
+  --color-avatar-gradient-to: #F2937A;
+  --color-avatar-accent: #F2937A;
+
+  /* Dividers */
+  --color-divider: #F0E6D8;
+  --color-separator: #E7DAC8;
+
+  /* Badges */
+  --color-badge-achievement-bg: #CFEBD8;
+  --color-badge-achievement-text: #3E9B6C;
+  --color-badge-activity-bg: #C7E7F1;
+  --color-badge-activity-text: #2E89A6;
+  --color-badge-announcement-bg: #CCD8F4;
+  --color-badge-announcement-text: #4E72C8;
+
+  /* Child avatar (blue) */
+  --color-avatar-blue-bg: #A9D9E8;
+  --color-avatar-blue-text: #1F7A93;
+
+  /* Photo placeholder */
+  --color-photo-placeholder-bg: #F4ECE1;
+  --color-photo-placeholder-border: #DBCDBA;
+  --color-photo-placeholder-text: #B0A290;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html,
+body {
+  margin: 0;
+  padding: 0;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: #F6ECDF;
+  color: #3F362E;
+  font-family: var(--font-nunito, "Nunito"), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Scrollbar del mockup */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #E4D6C4;
+  border-radius: 8px;
+  border: 3px solid transparent;
+  background-clip: content-box;
 }
