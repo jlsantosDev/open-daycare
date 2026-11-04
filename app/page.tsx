@@ -12,10 +12,10 @@ export default function Home() {
           height={20}
           priority
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
+        <div className="flex flex-col gap-6 text-center sm:flex-col sm:text-left">
           <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
             To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
+            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:text-white/[.08]">
               page.tsx
             </code>{" "}
             file.
@@ -48,7 +48,7 @@ export default function Home() {
             <Image
               className="dark:invert h-[14px] w-4"
               src="/vercel.svg"
-              alt="Vercel logomark"
+              alt="Vercel logo"
               width={16}
               height={14}
             />
