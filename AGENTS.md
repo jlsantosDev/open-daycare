@@ -39,6 +39,15 @@ npm run lint   # eslint
 - Playwright screenshots y cualquier cosa relacionada a playwright tiene que estar en la carpeta .playwright-mcp.
 - Context7 usaremos este mcp para traer la documentación actualizada del framework.
 
+## Specs
+
+- Los specs viven en `specs/` con formato `NN-slug.md`; su sección "Criterios de aceptación" usa checks `- [ ]` / `- [x]`.
+
+## Agentes y comandos
+
+- Agente **spec-verifier** (`.opencode/agents/spec-verifier.md`): verifica los criterios de aceptación de un spec con evidencia real — Context7 para lo que dependa de Next.js, Playwright MCP + visión para pantallas (screenshots en `.playwright-mcp/`). Solo puede editar archivos bajo `specs/`; aplica `lint`/`tsc`, corrige checks y documenta fallas sin tocar código de la app.
+- Comando **`/verify-spec <spec>`** (`.opencode/command/verify-spec.md`): atajo que corre el agente `spec-verifier` sobre el spec indicado (número, slug o ruta, ej. `/verify-spec 01-feed-home`).
+
 ## Skills
 
 `skills-lock.json` fija las skills del curso: `spec` y `spec-impl` (flujo de especificación + implementación). Preferirlas al tocar funcionalidad de la app.

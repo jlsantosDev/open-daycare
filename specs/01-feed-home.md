@@ -109,20 +109,21 @@ data/
 
 ## Criterios de aceptación
 
-- [ ] `npm run dev` renderiza `/` sin errores de build ni de consola.
-- [ ] El body usa Nunito; los títulos/tarjetas usan Fredoka; el fondo es `#F6ECDF`.
-- [ ] Aparecen 3 posts en el orden del mockup, con sus badges: LOGRO (verde), ACTIVIDAD (celeste), ANUNCIO (azul).
-- [ ] El post de actividad muestra el placeholder de foto dashed `#DBCDBA` con el caption "Foto · pintando con témperas".
-- [ ] El sidebar muestra "Nueva publicación" con el degradado del mockup y "Feed" como item activo; los links van a rutas reales (`/nueva-publicacion`, `/ninos`, `/avisos`, `/mi-cuenta`, `/login`).
-- [ ] Los links de cada post apuntan a `/detalle-publicacion` y "Editar" a `/nueva-publicacion`; el placeholder de foto a `/foto`. Mostrar 404 al momento es aceptable: las pantallas son de las próximas specs.
-- [ ] En un viewport <768px el sidebar izquierdo no es visible y aparece el header móvil sticky con el logo OpenDayCare y el botón hamburguesa.
-- [ ] Al pulsar el botón hamburguesa se abre el menú lateral que desliza desde la izquierda con backdrop; se cierra con click en el backdrop, el botón X, o cualquier link del menú.
-- [ ] En ≥768px el header móvil no aparece, el sidebar es visible con estilo del mockup y el botón hamburguesa no existe en el DOM visible.
-- [ ] En móvil no hay scroll horizontal: las tarjetas de posts ocupan el ancho disponible y los paddings se reducen respecto a los 40px del desktop.
-- [ ] El header móvil se mantiene fijo (sticky) mientras se hace scroll del feed.
-- [ ] `npm run lint` pasa sin errores y `npx tsc --noEmit` no reporta errores de tipos.
-- [ ] Comparado lado a lado con `references/pantallas/feed.dc.html` en navegador, no hay diferencias visibles de tipografía, colores ni layout.
-- [ ] La estructura de directorios es exactamente `components/AppShell/`, `components/PostCard/` y `data/mock.ts`; `page.tsx` no contiene JSX de posts ni de nav — solo la composición y el `map`.
+- [x] `npm run dev` renderiza `/` sin errores de build ni de consola.
+- [x] El body usa Nunito; los títulos/tarjetas usan Fredoka; el fondo es `#F6ECDF`.
+- [x] Aparecen 3 posts en el orden del mockup, con sus badges: LOGRO (verde), ACTIVIDAD (celeste), ANUNCIO (azul).
+- [x] El post de actividad muestra el placeholder de foto dashed `#DBCDBA` con el caption "Foto · pintando con témperas".
+- [x] El sidebar muestra "Nueva publicación" con el degradado del mockup y "Feed" como item activo; los links van a rutas reales (`/nueva-publicacion`, `/ninos`, `/avisos`, `/mi-cuenta`, `/login`).
+- [x] Los links de cada post apuntan a `/detalle-publicacion` y "Editar" a `/nueva-publicacion`; el placeholder de foto a `/foto`. Mostrar 404 al momento es aceptable: las pantallas son de las próximas specs.
+- [x] En un viewport <768px el sidebar izquierdo no es visible y aparece el header móvil sticky con el logo OpenDayCare y el botón hamburguesa.
+- [x] Al pulsar el botón hamburguesa se abre el menú lateral que desliza desde la izquierda con backdrop; se cierra con click en el backdrop, el botón X, o cualquier link del menú.
+- [x] En ≥768px el header móvil no aparece, el sidebar es visible con estilo del mockup y el botón hamburguesa no existe en el DOM visible.
+- [x] En móvil no hay scroll horizontal: las tarjetas de posts ocupan el ancho disponible y los paddings se reducen respecto a los 40px del desktop.
+- [x] El header móvil se mantiene fijo (sticky) mientras se hace scroll del feed.
+- [x] `npm run lint` pasa sin errores y `npx tsc --noEmit` no reporta errores de tipos.
+- [x] Comparado lado a lado con `references/pantallas/feed.dc.html` en navegador, no hay diferencias visibles de tipografía, colores ni layout.
+  > Nota de verificación: comparado contra la captura `references/screenshots/feed.png` (el MCP de Playwright bloquea `file://`, no se pudo abrir el `.dc.html` en navegador). Tipografía, colores y layout coinciden. Micro-diferencias de microcopy (no de tipografía/color/layout): el eyebrow de la app usa "GUARDERÍA · SALA SOLES" (punto medio) mientras el mockup usa "GUARDERÍA - SALA SOLES" (guion), y el role del usuario es "Maestra · Soles" en la app (valor fijado por este spec) vs "Maestra · Sala Soles" en el mockup. Capturas de evidencia en `.playwright-mcp/`.
+- [x] La estructura de directorios es exactamente `components/AppShell/`, `components/PostCard/` y `data/mock.ts`; `page.tsx` no contiene JSX de posts ni de nav — solo la composición y el `map`.
 
 ## Decisiones
 
