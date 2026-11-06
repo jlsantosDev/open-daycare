@@ -51,22 +51,26 @@
   --color-photo-placeholder-text: #B0A290;
 }
 
-html,
-body {
-  margin: 0;
-  padding: 0;
-}
+/* Estilos base en @layer base: sin capa, estas reglas pisan utilidades
+   Tailwind (ej. a { color: inherit } sobre text-white en un <Link>). */
+@layer base {
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+  }
 
-body {
-  background: #F6ECDF;
-  color: #3F362E;
-  font-family: var(--font-nunito, "Nunito"), system-ui, sans-serif;
-  -webkit-font-smoothing: antialiased;
-}
+  body {
+    background: #F6ECDF;
+    color: #3F362E;
+    font-family: var(--font-nunito, "Nunito"), system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
 
-a {
-  text-decoration: none;
-  color: inherit;
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
 }
 
 /* Scrollbar del mockup */
