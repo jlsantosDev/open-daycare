@@ -1,14 +1,20 @@
 "use client";
 
 import { useState } from "react";
-import { Sidebar } from "./Sidebar";
+import { Sidebar, type NavItemId } from "./Sidebar";
 
 /**
  * Responsive application shell: persistent sidebar on ≥768px, sticky mobile
  * header with a hamburger menu that opens a sliding drawer below that.
  * The feed content (children) stays server-rendered.
  */
-export function AppShell({ children }: { children: React.ReactNode }) {
+export function AppShell({
+  children,
+  activeItem,
+}: {
+  children: React.ReactNode;
+  activeItem?: NavItemId;
+}) {
   const [menuOpen, setMenuOpen] = useState(false);
 
   /* Only closes the drawer when the click lands on a nav link. */
@@ -22,7 +28,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     <div className="flex min-h-screen bg-background">
       {/* Desktop sidebar */}
       <aside className="sticky top-0 hidden h-screen md:flex">
-        <Sidebar />
+        <Sidebar activeItem={activeItem} />
       </aside>
 
       {/* Column: mobile header + content */}
@@ -85,7 +91,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               <path d="M18 6 6 18M6 6l12 12" />
             </svg>
           </button>
-          <Sidebar />
+          <Sidebar activeItem={activeItem} />
         </div>
       </div>
     </div>
