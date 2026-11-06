@@ -44,11 +44,13 @@ const icons = {
   ),
 };
 
-const navItems = [
-  { href: "/", label: "Feed", icon: icons.home, active: true },
-  { href: "/ninos", label: "Niños", icon: icons.children, active: false },
-  { href: "/avisos", label: "Avisos", icon: icons.bell, active: false },
-  { href: "/mi-cuenta", label: "Mi cuenta", icon: icons.user, active: false },
+export type NavItemId = "feed" | "kids" | "avisos" | "cuenta";
+
+const navItems: { id: NavItemId; href: string; label: string; icon: React.ReactNode }[] = [
+  { id: "feed", href: "/", label: "Feed", icon: icons.home },
+  { id: "kids", href: "/kids", label: "Niños", icon: icons.children },
+  { id: "avisos", href: "/avisos", label: "Avisos", icon: icons.bell },
+  { id: "cuenta", href: "/mi-cuenta", label: "Mi cuenta", icon: icons.user },
 ];
 
 const activeItemClasses = "bg-accent-soft-bg text-accent font-extrabold";
@@ -57,8 +59,9 @@ const inactiveItemClasses = "bg-transparent text-nav font-semibold";
 /**
  * Navigation rail from the mockup. Presentational: positioning is up to the
  * caller (fixed rail on desktop, overlapping panel on the mobile drawer).
+ * `activeItem` resalta el item de la página actual.
  */
-export function Sidebar() {
+export function Sidebar({ activeItem = "kids" }: { activeItem?: NavItemId }) {
   return (
     <aside className="flex h-full w-[248px] flex-none flex-col bg-surface px-4 py-6">
       {/* Logo */}
@@ -88,7 +91,7 @@ export function Sidebar() {
             key={item.href}
             href={item.href}
             className={`flex items-center gap-3 rounded-xl px-3 py-[11px] text-[14.5px] ${
-              item.active ? activeItemClasses : inactiveItemClasses
+              item.id === activeItem ? activeItemClasses : inactiveItemClasses
             }`}
           >
             {item.icon}

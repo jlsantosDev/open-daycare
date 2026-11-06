@@ -12,7 +12,7 @@ const cameraIcon = (
 
 export default function Home() {
   return (
-    <AppShell>
+    <AppShell activeItem="feed">
       <div className="mx-auto w-full max-w-[760px] px-4 pb-20 pt-[34px] sm:px-10">
         {/* Saludo */}
         <header className="mb-6">
