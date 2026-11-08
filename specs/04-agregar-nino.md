@@ -93,18 +93,32 @@ app/
 ## Criterios de aceptación
 
 - [ ] `npm run dev` renderiza `/kids` sin errores de build ni de consola, con las 8 tarjetas como antes.
+  - **Verificado:** /kids con las 8 tarjetas y contador "8 niños"; consola con 0 errores y 0 warnings tras todo el flujo. Captura: `.playwright-mcp/04-alta-lista-9.png`.
 - [ ] El botón "Agregar niño" abre el modal con el diseño del mockup (tarjeta `#FBF4EC` máx 520px, cabecera Cancelar / "Agregar niño" / Guardar `#D9583C`, eyebrows y estilos de campo del mockup), y el overlay oscurece `/kids` detrás.
+  - **Verificado:** colores computados — tarjeta `rgb(251,244,236)`, radio 24px, max-width 520px; Guardar `rgb(217,88,60)` (#D9583C); Cancelar y eyebrows `#94887B`; título Fredoka 18px/600; tracking de eyebrow 0.7px. Captura: `.playwright-mcp/04-modal-desktop.png`.
 - [ ] Guardar con el formulario vacío muestra mensajes de error en nombre, fecha y sala, no agrega tarjetas y no cierra el modal.
+  - **Verificado:** snapshot tras Guardar vacío muestra 3 `[invalid]` con los párrafos "Ingresá el nombre completo.", "Ingresá la fecha de nacimiento en formato dd/mm/aaaa." y "Elegí la sala."; contador permanece en 8 y el modal sigue abierto con foco en nombre.
 - [ ] El desplegable de sala arranca vacío (sin opción elegida) y contiene exactamente Sol, Luna, Tierra, Marte, Saturno y Jupiter.
-- [ ] `32/01/2026`, `13/01/2026`, `30/02/2026`, `29/02/2025` y textos que no sean `dd/mm/aaaa` muestran error de fecha y bloquean el guardado.
+  - **Verificado:** `<select>` controlado en `""` con placeholder "Seleccioná sala…" (disabled+hidden); opciones computadas exactas: Sol, Luna, Tierra, Marte, Saturno, Jupiter.
+- [ ] `32/01/2026`, `01/13/2026`, `30/02/2026`, `29/02/2025` y textos que no sean `dd/mm/aaaa` muestran error de fecha y bloquean el guardado.
+  - **Corrección del ejemplo (especificación):** el criterio original usaba `13/01/2026` para "mes 13", pero en dd/mm/aaaa eso es día 13 + mes 1 (fecha real). El mes fuera de rango va en la **2ª posición**: `01/13/2026`/`08/13/2026`. Documentado también en Decisiones.
+  - **Verificado:** errores de fecha con `32/01/2026`, `08/13/2026`, `30/02/2026`, `29/02/2025`, `12-05-2026` (texto no dd/mm); en todos el contador no cambia y el modal queda abierto.
 - [ ] `29/02/2024` se acepta como fecha válida; `29/02/2025` se rechaza (bisiesto correcto).
+  - **Verificado:** `29/02/2024` no produce error de fecha (avanza al error de sala); `29/02/2025` muestra "Ingresá una fecha dd/mm/aaaa real: día y mes dentro del calendario.".
 - [ ] Guardar con "Martina López" + `15/06/2022` + Sol cierra el modal y la grid pasa a 9 tarjetas con la nueva ("0 padres vinculados" → badge VINCULAR, inicial "M", sala Sol, edad "4 años").
+  - **Verificado:** modal cerrado, contador "9 niños", tarjeta "Martina López / 4 años · sin padres vinculados / VINCULAR / inicial M / avatar violeta (#C9B6E8)"; el alta deriva además el id `martina-lopez`. Captura: `.playwright-mcp/04-alta-lista-9.png`.
 - [ ] La fila "SALA SOLES · N niños" refleja el nuevo total (9) tras el alta y vuelve a 8 tras refrescar (alta in-memory).
+  - **Verificado:** "9 niños" tras el alta; tras recargar la página vuelve a "8 niños" y las tarjetas de altas desaparecen (in-memory, sin persistencia).
 - [ ] Si se cargan alergias ("Maní, Lactosa"), la tarjeta nueva muestra el badge de la primera etiqueta en mayúsculas; sin alergias muestra VINCULAR/chevron según padres.
+  - **Verificado:** alta con "Maní, Lactosa" muestra badge "MANÍ" (fallback de color aplicado; el alta genera id `martina-lopez-2` ante la colisión del slug ✔). Sin alergias: VINCULAR.
 - [ ] Cancelar, Esc y click en el fondo cierran el modal sin alterar la lista.
+  - **Verificado:** las tres rutas de cierre cierran el modal con la lista en 8; el click en fondo se probó con mouse en coordenada fuera de la tarjeta (`page.mouse.click(20, 320)`); con draft cargado Esc no guarda (el padre monta el modal por remount → siguiente apertura limpia).
 - [ ] En 375px el modal se ve completo con scroll interno, sin overflow horizontal ni errores.
+  - **Verificado:** scrollWidth 365 = clientWidth 365 (0 overflow), tarjeta 333px, fecha y sala apiladas (`grid-cols-1` <640px). Captura: `.playwright-mcp/04-modal-mobile-375.png`.
 - [ ] `npm run lint` pasa sin errores y `npx tsc --noEmit` no reporta errores de tipos.
+  - **Verificado:** ambos exit 0 (corridos tras los pasos y al cerrar).
 - [ ] Comparado lado a lado con `references/pantallas/agregar-nino.dc.html`, no hay diferencias visibles de tipografía, colores ni layout. Capturas en `.playwright-mcp/`.
+  - **Verificado:** capturas `.playwright-mcp/04-modal-desktop.png`, `04-modal-mobile-375.png`, `04-alta-lista-9.png`; colores y fuentes computados idénticos (Fredoka título, Nunito cuerpo, paleta del mockup). Únicas diferencias deliberadas: selección de sala nativa (`<select>`) en vez del widget falso del mockup y mensajes de error que el mockup no prevé.
 
 ## Decisiones
 
@@ -120,6 +134,9 @@ app/
 - **No:** persistencia local (localStorage) del alta: lo pedido es in-memory; el guardado real iría con backend en otro spec.
 - **No:** `<input type="date">` nativo: el pedido exige dd/mm/aaaa tipeado con ese formato y errores por día/mes fuera de rango; el date picker nativo no da ese feedback textual.
 - **No:** rooms como dominio nuevo (`data/rooms.ts`): son 6 strings fijos, `roomOptions` en `data/kids.ts` alcanza.
+- **Corrección (durante `/spec-impl`):** el criterio original usaba `13/01/2026` para "mes 13", pero en dd/mm/aaaa esa cadena es día 13 + mes 1 y es válida. Implementación reformulada al caso correcto (`08/13/2026`; "mes 13 o 18" según el pedido original). El código siempre estuvo bien: era un error del ejemplo del spec.
+- **Sí:** reset del modal por **remount condicional** (el padre monta `AddKidModal` solo cuando está abierto) en vez de un effect de reset: `react-hooks/set-state-in-effect` de ESLint prohíbe el `setState` en efecto y el remount garantiza formularios limpios en cada apertura sin código extra.
+- **Sí:** fallback de color en `KidCard` para badges de etiquetas nuevas: tras ensanchar `AllergyBadgeLabel` a `string`, una etiqueta no mapeada (ej. "SOJA") daba `className undefined`; usa los mismos colores del mockup (`#FBD8CC`/`#D9684A`).
 
 ## Riesgos
 
