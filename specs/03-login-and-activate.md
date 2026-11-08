@@ -12,7 +12,7 @@
 - Login en `/login` con el diseño exacto del mockup, en dos columnas (≥768px): panel izquierdo con degradado coral `linear-gradient(155deg, #F6A98E → #F2937A 45% → #EC7E62)`, logo "OpenDayCare" con ícono sol, claim "El día de cada niño, compartido con su familia.", texto de apoyo, pie "🌿 Guardería Sala Soles" y los dos círculos decorativos translúcidos; columna derecha con título "Iniciar sesión", subtítulo, campos EMAIL (vacío) y CONTRASEÑA, link "¿Olvidaste tu contraseña?", botón "Iniciar sesión" y pie "¿Te invitó la guardería? Activá tu cuenta".
 - **Sin selector "Ingreso como"** (decisión del usuario): la sección "INGRESO COMO" y los dos botones Personal/Familia del mockup se eliminan. El formulario empieza directamente en EMAIL.
 - El botón "Iniciar sesión" navega siempre a `/feed` (decisión del usuario: todo ingreso va al feed staff). Es un link, sin validación de email ni contraseña (decisión del usuario, mismo criterio solo-UI de SPEC 01/02).
-- El campo EMAIL queda **vacío**, sin precargar ningún email (decisión del usuario "de momento vacío"; se reevaluará más adelante). CONTRASEÑA con placeholder "••••••••".
+- El campo EMAIL viene **precargado con `caro@opendaycare.com`** (revisión del usuario durante `/spec-impl`: el spec original decía "de momento vacío" y se cambió a precarga). CONTRASEÑA con placeholder "••••••••".
 - Activar cuenta en `/activate-account` con el diseño exacto del mockup: pill del logo con sombra, título "Bienvenida a OpenDayCare", texto de invitación, tarjeta blanca "Te invitaron a seguir a **Mateo · Sala Soles**" con avatar circular de inicial "M" (colores de Mateo en `data/kids.ts`: `#A9D9E8`/`#1F7A93`), campos CÓDIGO DE INVITACIÓN ("7K4P9", tipografía Fredoka, letter-spacing 3px), EMAIL ("lucia.fernandez@gmail.com") y CREAR CONTRASEÑA precargados, checkbox de consentimiento de fotos (caja `#FBF1D6`, check verde `#5FB97E`) y botón "Activar mi cuenta".
 - El checkbox de consentimiento **bloquea el botón** (decisión del usuario): arranca sin tildar y "Activar mi cuenta" queda deshabilitado (opacidad reducida + `cursor-not-allowed`); al tildarlo se habilita y navega a `/familia-feed` (ruta futura, 404 momentáneo).
 - Los links cruzados operan como en el mockup: login → "Activá tu cuenta" a `/activate-account`; activar cuenta → "Iniciar sesión" a `/login`.
@@ -81,7 +81,7 @@ components/
 - [ ] `npm run dev` renderiza `/login` y `/activate-account` sin errores de build ni de consola.
 - [ ] `/login` replica el mockup en dos columnas: panel corporativo degradado (logo, claim en dos líneas con `<br>`, pie "🌿 Guardería Sala Soles", dos círculos decorativos translúcidos) y formulario a la derecha.
 - [ ] `/login` NO muestra la sección "INGRESO COMO" ni los botones Personal/Familia (eliminados por decisión del usuario).
-- [ ] El campo EMAIL de `/login` llega vacío (sin precarga) y CONTRASEÑA se muestra con placeholder "••••••••".
+- [ ] El campo EMAIL de `/login` llega precargado con `caro@opendaycare.com` y CONTRASEÑA se muestra con placeholder "••••••••".
 - [ ] El botón "Iniciar sesión" de `/login` navega siempre a `/feed`, sin importar lo que contengan los campos.
 - [ ] "¿Olvidaste tu contraseña?" existe como link (a `/forgot-password`, 404 momentáneo) sin pantalla propia.
 - [ ] En `/activate-account` la tarjeta de invitación dice "Te invitaron a seguir a Mateo · Sala Soles" con avatar de inicial "M" en los colores de Mateo (`#A9D9E8` fondo, `#1F7A93` texto).
@@ -97,7 +97,7 @@ components/
 
 - **Sí:** quitar el selector "Ingreso como" Personal/Familia (decisión explícita del usuario en el pedido de este spec). El login único va contra el feed staff.
 - **Sí:** botón "Iniciar sesión" como link directo a `/feed` sin validación (decisión del usuario 2.a). Consistente con los flujos solo-UI de SPEC 01/02.
-- **Sí:** email vacío "de momento" (decisión del usuario 3): si luego se precarga, se hace en otra spec y se documenta.
+- **Sí:** email precargado con `caro@opendaycare.com`. El spec original decía "de momento vacío" y el usuario lo cambió durante la implementación (`/spec-impl`, antes del Paso 3): es el email demo del personal del mockup original. Documentado en Alcance y en el criterio de aceptación correspondiente.
 - **Sí:** checkbox de consentimiento bloquea el botón (4.a): es el único estado de esta pantalla y hace el gating de consentimiento visible.
 - **Sí:** rutas `/login` y `/activate-account` (5.a), siguiendo la decisión de SPEC 02 (rutas únicamente en inglés). El sidebar ya apuntaba a `/login`.
 - **Sí:** "¿Olvidaste tu contraseña?" como link simple a 404 (6, patrón de SPEC 02 con `/kids/new`, etc.).
