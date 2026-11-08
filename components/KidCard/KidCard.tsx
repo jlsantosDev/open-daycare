@@ -49,9 +49,12 @@ export function KidCard({ kid }: { kid: Kid }) {
         </span>
       </span>
 
-      {/* Badge de alergia / VINCULAR / chevron */}
+      {/* Badge de alergia / VINCULAR / chevron. Etiquetas nuevas del modal
+          "Agregar niño" usan los mismos colores del mockup (fallback). */}
       {kid.allergyBadge ? (
-        <span className={`${badgeBaseClasses} ${allergyBadgeStyles[kid.allergyBadge.label]}`}>
+        <span
+          className={`${badgeBaseClasses} ${allergyBadgeStyles[kid.allergyBadge.label] ?? "bg-[#FBD8CC] text-[#D9684A]"}`}
+        >
           {kid.allergyBadge.label}
         </span>
       ) : kid.parents.length === 0 ? (

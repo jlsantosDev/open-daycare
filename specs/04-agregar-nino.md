@@ -115,6 +115,7 @@ app/
 - **Sí:** sala con placeholder vacío para que el "requerido" tenga sentido (decisión del usuario).
 - **Sí:** solo "Agregar"; el botón "Editar" del perfil queda fuera (decisión del usuario). Reutilizar el modal para edición iría en otro spec.
 - **Sí:** edad calculada desde la fecha al alta ("X años" / "N meses" si <1) en lugar de campo de edad manual: una sola fuente de verdad de la edad.
+- **Sí:** `enrolled` del niño nuevo = mes/año del alta (ej. "nov 2026"): el tipo `Kid` exige la fecha de ingreso y el form no la captura. Ambigüedad del spec resuelta con el usuario durante `/spec-impl` (Paso 4).
 - **Sí:** cerrar también con Esc y click en el fondo, además del link "Cancelar": patrón estándar de modales, no contradice el mockup.
 - **No:** persistencia local (localStorage) del alta: lo pedido es in-memory; el guardado real iría con backend en otro spec.
 - **No:** `<input type="date">` nativo: el pedido exige dd/mm/aaaa tipeado con ese formato y errores por día/mes fuera de rango; el date picker nativo no da ese feedback textual.
