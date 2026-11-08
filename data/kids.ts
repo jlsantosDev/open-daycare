@@ -9,7 +9,7 @@ export type Parent = {
 };
 
 /** Badge del listado; sin badge el card muestra chevron. */
-export type AllergyBadgeLabel = "MANÍ" | "LACTOSA";
+export type AllergyBadgeLabel = string; // "MANÍ" | "LACTOSA" del mockup; el alta del modal puede crear cualquier etiqueta
 
 export type Kid = {
   id: string; // slug de la ruta, ej. "mateo-fernandez"
@@ -25,6 +25,9 @@ export type Kid = {
   enrolled: string; // "feb 2025"
   parents: Parent[]; // 0 → badge "VINCULAR" y label "sin padres vinculados"
 };
+
+/** Salas predefinidas del desplegable del modal "Agregar niño" (SPEC 04). */
+export const roomOptions = ["Sol", "Luna", "Tierra", "Marte", "Saturno", "Jupiter"] as const;
 
 /**
  * Playgroup fixed fake data for the kids screens. Colors, ages, bad counts
