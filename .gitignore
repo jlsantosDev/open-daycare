@@ -42,3 +42,11 @@ next-env.d.ts
 
 # mcp
 .playwright-mcp/*
+
+# github
+.github/*
+
+
+
+
+
