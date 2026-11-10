@@ -37,11 +37,11 @@ jobs:
           -d client_id=sk_3aa7372b-dffe-4b49-8c21-aa46bad0de56 \
           -d subject_token="$oidc" | jq -r .access_token)
           echo "::add-mask::$token"
-          echo "OPENCODE_API_KEY=$token" >> "$GITHUB_ENV"
+          echo "OPENDAYCARE_API=$token" >> "$GITHUB_ENV"
 
       - name: Run opencode
         uses: anomalyco/opencode/github@latest
         env:
-          OPENDAYCARE_API: ${{ env.OPENCODE_API_KEY }}
+          OPENDAYCARE_API: ${{ env.OPENDAYCARE_API }}
         with:
           model: opencode-go/glm-5.3-flash
