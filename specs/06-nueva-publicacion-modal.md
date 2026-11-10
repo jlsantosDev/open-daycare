@@ -26,6 +26,7 @@
   - `likes` = 0, `comments` = 0, `photoCaption` vacío (no hay foto real).
 - **Cierres del modal:** link "Cancelar", tecla Esc y click en el fondo oscurecido descartan sin publicar.
 - **Trigger:** la caja "Compartí un momento…" de `/` pasa a `<button>` con **misma visual** y abre el modal (patrón SPEC 04/05: la ruta `/nueva-publicacion` nunca existió, no hay página que borrar).
+- **Trigger global (ampliación de la decisión del usuario, 2026-11-10):** el CTA "Nueva publicación" del sidebar (`AppShell`, presente en todas las páginas con shell) también abre este modal — era un `<Link href="/nueva-publicacion">` a una ruta muerta que devolvía **404**, ahora es `<button type="button">` client con la misma visual. El estado de posts y el montaje del modal suben a un provider client en el root layout (única forma de que el post publicado desde otra página sobreviva la navegación: `AppShell` compone cada página sin layout compartido). Publicar desde otra página aterriza en el feed (`router.push("/")`) con la tarjeta nueva arriba
 - Responsividad: en móvil (<768px) el modal ocupa casi todo el ancho con scroll interno del formulario; sin overflow horizontal.
 
 **Fuera de alcance (para specs futuros):**
@@ -93,24 +94,37 @@ components/
   NewPostModal/
     NewPostModal.tsx   ← client ("use client"): overlay + tarjeta del mockup, selección
                          de destinatarios, validaciones, derivación y cierre
+  NewPostProvider/
+    NewPostProvider.tsx ← client ("use client"): context global dueño del estado de
+                         posts + montaje condicional del modal + hook useNewPost();
+                         publicado fuera de `/` redirige al feed (ampliación 2026-11-10)
+  NewPostButton/
+    NewPostButton.tsx  ← client: CTA "Nueva publicación" del sidebar, abre el modal
+                          vía useNewPost() (reemplaza el Link muerto a 404)
   FeedSection/
     FeedSection.tsx    ← client: trigger "Compartí un momento…" (button) + separador
-                         PUBLICADO HOY + listado de posts (reusa PostCard)
-                         + montaje condicional del modal, dueño del estado de posts
+                         PUBLICADO HOY + listado de posts (reusa PostCard);
+                         consume posts/openNewPost del provider (ya no monta el modal)
   PostCard/
     PostCard.tsx        ← modificación: badgeStyles para comida/siesta/ánimo/foto
                          + badge con postTypeLabel[post.type] en uppercase
+  AppShell/
+    Sidebar.tsx         ← modificación: CTA → <NewPostButton/>; el resto de links intactos
+    AppShell.tsx        ← modificación: el drawer móvil se cierra con click en a/button
+                         (antes solo a; el CTA ahora es botón)
 
 data/
   mock.ts               ← modificación: ensancha PostType + postTypeLabel
 
 app/
+  layout.tsx            ← modificación: envuelve {children} con <NewPostProvider>
+                          (estado que sobrevive la navegación)
   page.tsx              ← server: sigue componiendo AppShell + encabezado del saludo;
                           delega caja + separador + feed a <FeedSection/>
 ```
 
-- Patrón de SPEC 04/05: el dueño del estado (`FeedSection`) es un client component que también renderiza el trigger, para que modal y listado compartan el estado.
-- `FeedSection` monta `NewPostModal` **condicionalmente** → reset del formulario por remount en cada apertura, sin effects de reset (decisión ya asentada en SPEC 04; evita también la regla ESLint `set-state-in-effect`).
+- Patrón de SPEC 04/05: el dueño del estado es un client component que renderiza/posee el trigger, para que modal y listado compartan el estado. Con el trigger global, el dueño es `NewPostProvider` (root layout) y ambos triggers (caja del feed y CTA del sidebar) consumen `useNewPost()`.
+- El provider monta `NewPostModal` **condicionalmente** → reset del formulario por remount en cada apertura, sin effects de reset (decisión ya asentada en SPEC 04; evita también la regla ESLint `set-state-in-effect`).
 - `NewPostModal` recibe `kids`, `typeOptions` y `onPublish(post)`; no conoce `FeedSection`.
 - `PostCard` sigue siendo server component: solo cambia el mapa de estilos y el label del badge.
 
@@ -147,6 +161,15 @@ app/
 - [x] `npm run lint` pasa sin errores y `npx tsc --noEmit` no reporta errores de tipos. *(`eslint` exit 0; `tsc --noEmit` exit 0 tras instalar deps y regenerar tipos de rutas con `next dev` — nota: en un checkout fresco sin `node_modules`, correr `npm ci` antes de `npx tsc --noEmit`.)*
 - [x] Comparado lado a lado con `references/pantallas/crear-publicacion.dc.html`, no hay diferencias visibles de tipografía, colores ni layout (más las divergencias deliberadas documentadas de estado inicial). *(Mockup renderizado vía HTTP local; evidencia `.playwright-mcp/06-mockup-crear-publicacion.png`; divergencias = las 4 decididas: 8 niños, TIPO sin default, descripción vacía, FOTOS decorativa.)*
 
+### Criterios de la ampliación 2026-11-10 (CTA global del sidebar)
+
+- [x] El CTA "Nueva publicación" del sidebar es un `<button type="button">` con la misma visual del link previo y **no** navega a `/nueva-publicacion` (ya no es un link; los "Editar" de las tarjetas siguen apuntando a esa ruta muerta — fuera de alcance del spec). En `/`, `/kids` y `/kids/[id]` abrir el CTA muestra el modal del mockup sin 404. *(Playwright: modal visible desde `/`, `/kids` y `/kids/mateo-fernandez`, url sin cambio a la ruta muerta; evidencia `.playwright-mcp/06-cta-sidebar-modal.png`.)*
+- [x] El CTA del drawer móvil (375px) abre el modal y el drawer queda cerrado detrás. *(`modalFromDrawer=true`, drawer cerrado; consola sin errores.)*
+- [x] Publicar con todo válido desde `/kids` cierra el modal, redirige a `/` y la tarjeta nueva queda primera de PUBLICADO HOY con el mapeo del spec ("Sofía y 1 más" / "familias de 2 niños" / badge FOTO / 0-0). *(`landedOn="/"`, primera tarjeta con texto de la descripción.)*
+- [x] El post publicado desde otra página sobrevive la navegación (estado del provider) y se pierde al refrescar: dentro de una sesión navigate `/kids` → publicar → `/` muestra la tarjeta; un refresh de `/` vuelve a los 3 posts originales. *(3 `article` tras `goto`.)*
+- [x] Regresión: el trigger "Compartí un momento…" del feed sigue abriendo el mismo modal, limpio (0 chips `aria-pressed`), Esc/Cancelar/fondo cierran, la publicación del feed sigue antepuesta. *(Playwright: trigger ok, `chipsFresh=0`, `escCloses=true`, post en memoria tras refresh: 3.)*
+- [x] `npm run lint` y `npx tsc --noEmit` limpios tras la ampliación. *(Ambos exit 0.)*
+
 ## Decisiones
 
 - **Sí:** modal sobre el feed en vez de la ruta `/nueva-publicacion` (decisión del usuario: "como un modal"). El link muerto se reemplaza por el disparador del modal; la ruta nunca existió, no hay página que borrar.
@@ -161,6 +184,8 @@ app/
 - **Sí:** hora del post tomada al momento de publicar en `HH:MM` (decisión del usuario, opción recomendada).
 - **Sí:** label del badge con acento correcto vía `postTypeLabel` ("ÁNIMO", no "ANIMO"); para los 3 tipos existentes el resultado visual no cambia (ya se mostraban en uppercase).
 - **Sí:** reset del modal por **remount condicional** (FeedSection lo monta solo cuando está abierto): patrón asentado en SPEC 04/05, evita además la regla ESLint `set-state-in-effect`.
+- **Sí (ampliación 2026-11-10):** el CTA "Nueva publicación" del sidebar abre el mismo modal (reporte del usuario: "cliqueo el botón y sale 404"). `AppShell` no puede ser el dueño porque compone cada página sin layout compartido → el provider client vive en `app/layout.tsx` y el estado de posts sube con él; así la tarjeta publicada desde otra página aparece en el feed y sobrevive la navegación (se pierde al refrescar, mismo criterio in-memory).
+- **No:** flujo de publicación desde perfil del niño u otras secciones fuera del sidebar: queda fuera de alcance.
 - **No:**`Record<PostType, ...>` parcial: el mapa de estilos debe cubrir las 7 claves para que el build valide la exhaustividad.
 - **No:** subida/preview de fotos, persistencia, edición/borrado de posts, detalle funcional, flujo desde perfil. Cada uno va en su propio spec si entra.
 
