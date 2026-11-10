@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import type { Kid } from "@/data/kids";
 import type { PostType } from "@/data/mock";
 import { postTypeLabel } from "@/data/mock";
@@ -10,6 +10,9 @@ type NewPostModalProps = {
   typeOptions: readonly PostType[];
   onClose: () => void;
 };
+
+/* Destinatarios excluyentes: N niños juntos o "Toda la sala", nunca ambos (SPEC 06) */
+type Recipients = { mode: "kids"; ids: Set<string> } | { mode: "wholeClass" };
 
 /* Colores de los chips TIPO del modal (paleta del mockup crear-publicacion.dc.html) */
 const typeChipStyles: Record<PostType, { bg: string; text: string }> = {
@@ -52,6 +55,7 @@ const wholeClassChipBase =
 export function NewPostModal({ kids, typeOptions, onClose }: NewPostModalProps) {
   // El padre monta el modal solo cuando está abierto: cada apertura arranca
   // limpio (state y textarea) por remount, sin efectos de reset.
+  const [recipients, setRecipients] = useState<Recipients>({ mode: "kids", ids: new Set() });
 
   // Esc cierra el modal sin descartar cambios ni confirmar nada.
   useEffect(() => {
@@ -61,6 +65,26 @@ export function NewPostModal({ kids, typeOptions, onClose }: NewPostModalProps) 
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [onClose]);
+
+  // Los clicks suman: toggle individual que no toca a los demás. Desde
+  // "Toda la sala", elegir un niño la desactiva (exclusión bidireccional).
+  const toggleKid = (id: string) => {
+    setRecipients((current) => {
+      if (current.mode === "wholeClass") return { mode: "kids", ids: new Set([id]) };
+      const ids = new Set(current.ids);
+      if (ids.has(id)) ids.delete(id);
+      else ids.add(id);
+      return { mode: "kids", ids };
+    });
+  };
+
+  // Toggle: activar limpia la selección de niños; re-click la desactiva
+  // (decisión del usuario, 2026-11-10) y queda el modal sin destinatarios.
+  const toggleWholeClass = () => {
+    setRecipients((current) =>
+      current.mode === "wholeClass" ? { mode: "kids", ids: new Set() } : { mode: "wholeClass" },
+    );
+  };
 
   return (
     // Overlay: click fuera de la tarjeta descarta.
@@ -87,27 +111,37 @@ export function NewPostModal({ kids, typeOptions, onClose }: NewPostModalProps) 
           {/* PARA: 8 chips de niños + "Toda la sala" */}
           <div className={eyebrowClass}>PARA</div>
           <div role="group" aria-label="Destinatarios" className="mb-[22px] flex flex-wrap gap-[9px]">
-            {kids.map((kid) => (
-              <button
-                type="button"
-                key={kid.id}
-                aria-pressed={false}
-                // Lógica de selección (acumulativa + exclusión con "Toda la sala") en el paso 4
-                className={`${kidChipBase} border-[#ECE0D0] bg-[#FFFDF9] text-[#6E6359]`}
-              >
-                <span
-                  className="flex h-[26px] w-[26px] flex-none items-center justify-center rounded-full font-heading text-[13px] font-semibold"
-                  style={{ backgroundColor: kid.avatarBg, color: kid.avatarText }}
+            {kids.map((kid) => {
+              const selected = recipients.mode === "kids" && recipients.ids.has(kid.id);
+              return (
+                <button
+                  type="button"
+                  key={kid.id}
+                  onClick={() => toggleKid(kid.id)}
+                  aria-pressed={selected}
+                  className={`${kidChipBase} ${
+                    selected ? "border-[#3F362E] bg-[#3F362E] text-white" : "border-[#ECE0D0] bg-[#FFFDF9] text-[#6E6359]"
+                  }`}
                 >
-                  {kid.initial}
-                </span>
-                {kid.name.split(" ")[0]}
-              </button>
-            ))}
+                  <span
+                    className="flex h-[26px] w-[26px] flex-none items-center justify-center rounded-full font-heading text-[13px] font-semibold"
+                    style={{ backgroundColor: kid.avatarBg, color: kid.avatarText }}
+                  >
+                    {kid.initial}
+                  </span>
+                  {kid.name.split(" ")[0]}
+                </button>
+              );
+            })}
             <button
               type="button"
-              aria-pressed={false}
-              className={`${wholeClassChipBase} border-[#ECE0D0] bg-[#FFFDF9] text-[#6E6359]`}
+              onClick={toggleWholeClass}
+              aria-pressed={recipients.mode === "wholeClass"}
+              className={`${wholeClassChipBase} ${
+                recipients.mode === "wholeClass"
+                  ? "border-[#3F362E] bg-[#3F362E] text-white"
+                  : "border-[#ECE0D0] bg-[#FFFDF9] text-[#6E6359]"
+              }`}
             >
               Toda la sala
             </button>
