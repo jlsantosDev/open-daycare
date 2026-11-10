@@ -1,4 +1,15 @@
-export type PostType = "logro" | "actividad" | "anuncio";
+export type PostType = "logro" | "actividad" | "anuncio" | "comida" | "siesta" | "animo" | "foto";
+
+/* Label con acento para el badge de la tarjeta (se muestra en uppercase) */
+export const postTypeLabel: Record<PostType, string> = {
+  logro: "Logro",
+  actividad: "Actividad",
+  anuncio: "Anuncio",
+  comida: "Comida",
+  siesta: "Siesta",
+  animo: "Ánimo",
+  foto: "Foto",
+};
 
 export type Post = {
   id: string;
