@@ -1,6 +1,6 @@
 # SPEC 02 — Pantallas de Niños: listado y perfil (solo UI)
 
-> **Estado:** Aprobado
+> **Estado:** Implementado
 > **Depende de:** SPEC 01
 > **Fecha:** 2026-11-06
 > **Objetivo:** Implementar los mockups `references/pantallas/ninos.dc.html` y `references/pantallas/perfil-nino.dc.html` como las rutas `/kids` y `/kids/[id]` — únicamente interfaces y componentes reutilizando `AppShell`, con data ficticia y búsqueda local en el frontend, sin backend ni lógica de negocio.

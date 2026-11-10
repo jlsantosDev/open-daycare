@@ -1,6 +1,6 @@
 # SPEC 01 — Home: feed siguiendo el mockup
 
-> **Estado:** Aprobado
+> **Estado:** Implementado
 > **Depende de:** —
 > **Fecha:** 2026-11-04
 > **Objetivo:** Implementar el mockup `references/pantallas/feed.dc.html` como pantalla home `/` con contenido estático de data ficticia, responsivo con menú hamburguesa en pantallas pequeñas y estilo idéntico al mockup, sin autenticación ni base de datos.
