@@ -203,13 +203,13 @@ export function NewPostModal({ kids, typeOptions, onPublish, onClose }: NewPostM
     >
       {/* Tarjeta del mockup */}
       <div className="mx-auto w-full max-w-[580px] overflow-hidden rounded-[24px] border border-[#ECE0D0] bg-[#FBF4EC] shadow-[0_20px_50px_-24px_rgba(63,54,46,0.35)]">
-        {/* Cabecera: Cancelar / título / Publicar */}
-        <div className="flex items-center justify-between border-b border-[#ECE0D0] px-[26px] py-5">
-          <button type="button" onClick={onClose} className="text-[15px] font-bold text-[#94887B]">
+        {/* Cabecera: Cancelar / título / Publicar (gap y padding ajustados para 375px) */}
+        <div className="flex items-center justify-between gap-2 border-b border-[#ECE0D0] px-3 py-5 sm:gap-3 sm:px-[26px]">
+          <button type="button" onClick={onClose} className="flex-none text-[15px] font-bold text-[#94887B]">
             Cancelar
           </button>
           <span className="font-heading text-[18px] font-semibold text-heading">Nueva publicación</span>
-          <button type="submit" form="new-post-form" className="text-[15px] font-extrabold text-[#D9583C]">
+          <button type="submit" form="new-post-form" className="flex-none text-[15px] font-extrabold text-[#D9583C]">
             Publicar
           </button>
         </div>
