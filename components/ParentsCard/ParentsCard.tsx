@@ -1,5 +1,8 @@
-import Link from "next/link";
-import type { Kid, Parent } from "@/data/kids";
+"use client";
+
+import { useState } from "react";
+import { placeholderInvitation, relationOptions, type Kid, type Parent } from "@/data/kids";
+import { LinkParentModal } from "@/components/LinkParentModal/LinkParentModal";
 
 /* Badge según estado del padre (token para ACTIVA, inline para PENDIENTE) */
 const statusBadgeClasses = { activa: "bg-badge-achievement-bg text-badge-achievement-text", pendiente: "bg-[#F7E7A6] text-[#9A7B1E]" } as const;
@@ -8,8 +11,10 @@ const statusBadgeClasses = { activa: "bg-badge-achievement-bg text-badge-achieve
 const relationLabel = (parent: Parent) =>
   `${parent.relation} · ${parent.status === "pendiente" ? "invitación enviada" : parent.status}`;
 
-/** "PADRES VINCULADOS" card: read-only list + link to /kids/[id]/link-parent. */
+/** "PADRES VINCULADOS" card: list + botón que abre el modal "Vincular padre". */
 export function ParentsCard({ kid }: { kid: Kid }) {
+  const [linkModalOpen, setLinkModalOpen] = useState(false);
+
   return (
     <div className="rounded-[16px] border border-surface-border bg-surface px-[18px] py-4">
       <div className="mb-[14px] text-[12.5px] font-extrabold tracking-[0.8px] text-eyebrow">PADRES VINCULADOS</div>
@@ -35,16 +40,26 @@ export function ParentsCard({ kid }: { kid: Kid }) {
           </div>
         ))}
 
-        {/* Vincular otro padre */}
-        <Link href={`/kids/${kid.id}/link-parent`} className="flex items-center gap-3 pt-2">
+        {/* Vincular otro padre: abre el modal del mockup vincular-padre */}
+        <button type="button" onClick={() => setLinkModalOpen(true)} className="flex items-center gap-3 pt-2">
           <span className="flex h-10 w-10 flex-none items-center justify-center rounded-full border-[1.5px] border-dashed border-photo-placeholder-border text-photo-placeholder-text">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M12 5v14M5 12h14" />
             </svg>
           </span>
           <span className="text-[14.5px] font-extrabold text-accent-strong">Vincular otro padre</span>
-        </Link>
+        </button>
       </div>
+
+      {/* Montaje condicional: cada apertura arranca limpio por remount (SPEC 04). */}
+      {linkModalOpen && (
+        <LinkParentModal
+          kidName={kid.name}
+          relationOptions={relationOptions}
+          placeholderInvitation={placeholderInvitation}
+          onClose={() => setLinkModalOpen(false)}
+        />
+      )}
     </div>
   );
 }
