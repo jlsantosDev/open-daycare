@@ -29,6 +29,12 @@ export type Kid = {
 /** Salas predefinidas del desplegable del modal "Agregar niño" (SPEC 04). */
 export const roomOptions = ["Sol", "Luna", "Tierra", "Marte", "Saturno", "Jupiter"] as const;
 
+/** Parentescos predefinidos de los chips del modal "Vincular padre" (SPEC 05). */
+export const relationOptions = ["Mamá", "Papá", "Tutor/a"] as const;
+
+/** Código de invitación ficticio del modal "Vincular padre" (SPEC 05); la lógica real va en otro spec. */
+export const placeholderInvitation = { code: "7K4P9", expiresIn: "Vence en 7 días" } as const;
+
 /**
  * Playgroup fixed fake data for the kids screens. Colors, ages, bad counts
  * and parent amounts mirror the mockups (`references/pantallas/*.dc.html`):
