@@ -1,6 +1,6 @@
 # SPEC 05 — Modal "Vincular padre" en el perfil del niño (UI + validación)
 
-> **Estado:** Aprobado
+> **Estado:** Implementado
 > **Depende de:** SPEC 02 (SPEC 04 como referencia del patrón de modal)
 > **Fecha:** 2026-11-10
 > **Objetivo:** Implementar el mockup `references/pantallas/vincular-padre.dc.html` como un modal que abre el link "Vincular otro padre" de la tarjeta PADRES VINCULADOS en `/kids/[id]`, con nombre, email (con formato validado) y parentesco requeridos, código de invitación ficticio y cierre del modal al enviar válido, sin backend ni efectos sobre la lista de padres.
@@ -82,18 +82,30 @@ app/
 
 ## Criterios de aceptación
 
-- [ ] `npm run dev` renderiza `/kids/[id]` (ej. `/kids/mateo-fernandez`) sin errores de build ni de consola, con la tarjeta PADRES VINCULADOS como antes.
-- [ ] "Vincular otro padre" abre el modal con el diseño del mockup: tarjeta `#FBF4EC` máx 480px radio 24px, cabecera con X (34px `#F0E6D8`), título "Vincular padre" (Fredoka 18px/600) y subtítulo "a {nombre del niño}"; overlay oscurece el perfil detrás.
-- [ ] El banner informativo muestra el texto del mockup con el primer nombre real del niño ("Solo verá el feed de Mateo.").
-- [ ] Los chips de parentesco abren los 3 deseleccionados (bg `#FFFDF9`); al elegir uno queda seleccionado (bg `#CCD8F4`, texto `#4E72C8`) y al elegir otro lo reemplaza.
-- [ ] Enviar con el formulario vacío muestra errores en nombre, email y parentesco, no cierra el modal y el primer campo con error recibe focus.
-- [ ] `pepe`, `pepe@` y `pepe@ejemplo` muestran error de formato de email; `pepe@ejemplo.com` no produce error de email.
-- [ ] La caja del código (fondo `#FBF1D6`, borde dashed `#E6D08A`) es visible desde que abre el modal con código "7K4P9" (Fredoka 34px, tracking 7px, `#8A7234`) y "Vence en 7 días".
-- [ ] Enviar con nombre + email válido + parentesco elegido cierra el modal; la tarjeta PADRES VINCULADOS y el perfil quedan exactamente como antes (no se agrega ningún padre).
-- [ ] X, Esc y click en el fondo cierran el modal sin cambios; la próxima apertura muestra el formulario limpio (chips deseleccionados, campos vacíos).
-- [ ] En 375px el modal se ve completo con scroll interno, sin overflow horizontal ni errores de consola.
-- [ ] `npm run lint` pasa sin errores y `npx tsc --noEmit` no reporta errores de tipos.
-- [ ] Comparado lado a lado con `references/pantallas/vincular-padre.dc.html`, no hay diferencias visibles de tipografía, colores ni layout. Capturas en `.playwright-mcp/`.
+- [x] `npm run dev` renderiza `/kids/[id]` (ej. `/kids/mateo-fernandez`) sin errores de build ni de consola, con la tarjeta PADRES VINCULADOS como antes.
+  - **Verificado:** navegación a `/kids/mateo-fernandez` sin errores de build; tarjeta PADRES VINCULADOS con Lucía (ACTIVA) y Diego (PENDIENTE) y botón "Vincular otro padre"; consola 0 errores/0 warnings en toda la sesión. Captura: `.playwright-mcp/05-perfil.png`.
+- [x] "Vincular otro padre" abre el modal con el diseño del mockup: tarjeta `#FBF4EC` máx 480px radio 24px, cabecera con X (34px `#F0E6D8`), título "Vincular padre" (Fredoka 18px/600) y subtítulo "a {nombre del niño}"; overlay oscurece el perfil detrás.
+  - **Verificado:** estilos computados — tarjeta `rgb(251,244,236)` (`#FBF4EC`), borde `#ECE0D0`, radio 24px, ancho 480px (max-width 480px), sombra; X 34×34px `#F0E6D8` texto `#94887B` radio 10px; título Fredoka 18px/600 `#3F362E`; subtítulo "a Mateo Fernández"; overlay `bg-black/40` con el perfil visible detrás. Captura: `.playwright-mcp/05-modal-desktop.png`.
+- [x] El banner informativo muestra el texto del mockup con el primer nombre real del niño ("Solo verá el feed de Mateo.").
+  - **Verificado:** texto exacto "Le enviaremos un correo con un código para que active su cuenta. Solo verá el feed de Mateo." (primer nombre real); fondo `rgb(227,236,251)` (`#E3ECFB`), radio 14px, texto 13.5px `#3F5694` Nunito, icono de info con stroke `#4E72C8`.
+- [x] Los chips de parentesco abren los 3 deseleccionados (bg `#FFFDF9`); al elegir uno queda seleccionado (bg `#CCD8F4`, texto `#4E72C8`) y al elegir otro lo reemplaza.
+  - **Verificado:** los 3 chips abren `aria-pressed=false` con bg `#FFFDF9`, borde `#ECE0D0`, texto `#6E6359` (divergencia decidida: el mockup preselecciona "Mamá"); al elegir Mamá → bg `#CCD8F4`, borde `#9FB8EC`, texto `#4E72C8`, `aria-pressed=true`; elegir Papá lo reemplaza (Mamá vuelve a deseleccionado).
+- [x] Enviar con el formulario vacío muestra errores en nombre, email y parentesco, no cierra el modal y el primer campo con error recibe focus.
+  - **Verificado:** snapshot tras Enviar vacío muestra 3 párrafos ("Ingresá el nombre del padre o madre.", "Ingresá el email.", "Elegí el parentesco."), el modal sigue abierto con los inputs `[invalid]` y el focus queda en `[name="name"]`.
+- [x] `pepe`, `pepe@` y `pepe@ejemplo` muestran error de formato de email; `pepe@ejemplo.com` no produce error de email.
+  - **Verificado:** los tres valores muestran "Ingresá un email válido." con el campo `[invalid]`; `pepe@ejemplo.com` no produce error de email (avanza al submit válido).
+- [x] La caja del código (fondo `#FBF1D6`, borde dashed `#E6D08A`) es visible desde que abre el modal con código "7K4P9" (Fredoka 34px, tracking 7px, `#8A7234`) y "Vence en 7 días".
+  - **Verificado:** caja `rgb(251,241,214)` (`#FBF1D6`), borde dashed `#E6D08A`, radio 16px, visible desde la apertura; código Fredoka 34px/600, tracking 7px, `#8A7234`; "Vence en 7 días" debajo. Constante `placeholderInvitation` de `data/kids.ts`.
+- [x] Enviar con nombre + email válido + parentesco elegido cierra el modal; la tarjeta PADRES VINCULADOS y el perfil quedan exactamente como antes (no se agrega ningún padre).
+  - **Verificado:** submit con "Lucía Gómez" + `pepe@ejemplo.com` + Papá cierra el modal; la tarjeta conserva exactamente 2 filas (Lucía ACTIVA, Diego PENDIENTE) sin padres agregados (SPEC 05: el envío válido solo cierra).
+- [x] X, Esc y click en el fondo cierran el modal sin cambios; la próxima apertura muestra el formulario limpio (chips deseleccionados, campos vacíos).
+  - **Verificado:** las tres rutas (Esc, mousedown sobre el overlay fuera de la tarjeta, botón X) cierran con la tarjeta intacta; la reapertura muestra name/email vacíos y los 3 chips deseleccionados (reset por remount, patrón SPEC 04).
+- [x] En 375px el modal se ve completo con scroll interno, sin overflow horizontal ni errores de consola.
+  - **Verificado:** scrollWidth 365 = clientWidth 365 (0 overflow horizontal), tarjeta 323px, overlay con scroll interno del formulario. Captura: `.playwright-mcp/05-modal-mobile-375.png`. Consola: 0 errores, 0 warnings.
+- [x] `npm run lint` pasa sin errores y `npx tsc --noEmit` no reporta errores de tipos.
+  - **Verificado:** ambos exit 0 (corridos tras los pasos 1–4 y al cerrar, paso 6).
+- [x] Comparado lado a lado con `references/pantallas/vincular-padre.dc.html`, no hay diferencias visibles de tipografía, colores ni layout. Capturas en `.playwright-mcp/`.
+  - **Verificado:** capturas `.playwright-mcp/05-modal-desktop.png` (app) y `.playwright-mcp/05-mockup-vincular.png` (mockup); cabecera, banner, eyebrows, campos, chips, caja de código y botón coinciden en tipografía (Fredoka títulos/código, Nunito cuerpo), colores y layout. Únicas diferencias deliberadas y documentadas: los chips abren deseleccionados (decisión del usuario) y los mensajes de error que el mockup no prevé (mismo criterio que SPEC 04).
 
 ## Decisiones
 
