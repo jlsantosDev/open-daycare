@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Post, PostType } from "@/data/mock";
+import { postTypeLabel } from "@/data/mock";
 
 /* Colores del badge según el tipo de post (tokens de globals.css) */
 const badgeStyles: Record<PostType, { card: string; dot: string }> = {
@@ -14,6 +15,23 @@ const badgeStyles: Record<PostType, { card: string; dot: string }> = {
   anuncio: {
     card: "bg-badge-announcement-bg text-badge-announcement-text",
     dot: "bg-badge-announcement-text",
+  },
+  /* Nuevos tipos (SPEC 06): fondo pastel + texto saturado derivados de la paleta del mockup */
+  comida: {
+    card: "bg-[#EFE8CB] text-[#9A7B1E]",
+    dot: "bg-[#9A7B1E]",
+  },
+  siesta: {
+    card: "bg-[#E7DCF6] text-[#7B5FC0]",
+    dot: "bg-[#7B5FC0]",
+  },
+  animo: {
+    card: "bg-[#F9D2DE] text-[#C56486]",
+    dot: "bg-[#C56486]",
+  },
+  foto: {
+    card: "bg-[#FBD8CC] text-[#D9684A]",
+    dot: "bg-[#D9684A]",
   },
 };
 
@@ -66,7 +84,7 @@ export function PostCard({ post }: { post: Post }) {
         </span>
         <span className={`flex flex-none items-center gap-[7px] rounded-full px-3 py-1.5 ${badge.card}`}>
           <span className={`h-2 w-2 rounded-full ${badge.dot}`} />
-          <span className="text-xs font-extrabold tracking-[0.5px] uppercase">{post.type}</span>
+          <span className="text-xs font-extrabold tracking-[0.5px] uppercase">{postTypeLabel[post.type]}</span>
         </span>
       </div>
 
