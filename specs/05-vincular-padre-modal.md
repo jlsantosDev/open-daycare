@@ -92,6 +92,7 @@ app/
   - **Verificado:** los 3 chips abren `aria-pressed=false` con bg `#FFFDF9`, borde `#ECE0D0`, texto `#6E6359` (divergencia decidida: el mockup preselecciona "Mamá"); al elegir Mamá → bg `#CCD8F4`, borde `#9FB8EC`, texto `#4E72C8`, `aria-pressed=true`; elegir Papá lo reemplaza (Mamá vuelve a deseleccionado).
 - [x] Enviar con el formulario vacío muestra errores en nombre, email y parentesco, no cierra el modal y el primer campo con error recibe focus.
   - **Verificado:** snapshot tras Enviar vacío muestra 3 párrafos ("Ingresá el nombre del padre o madre.", "Ingresá el email.", "Elegí el parentesco."), el modal sigue abierto con los inputs `[invalid]` y el focus queda en `[name="name"]`.
+    - **Nota post-implementación (2026-11-10, pedido del usuario):** además del Enviar, el email con formato inválido muestra el aviso **al salir del campo (blur)** — "pepe" + blur delata "Ingresá un email válido." sin esperar al Enviar; al corregir, el aviso desaparece al tipear. Los vacíos siguen reclamándose al Enviar.
 - [x] `pepe`, `pepe@` y `pepe@ejemplo` muestran error de formato de email; `pepe@ejemplo.com` no produce error de email.
   - **Verificado:** los tres valores muestran "Ingresá un email válido." con el campo `[invalid]`; `pepe@ejemplo.com` no produce error de email (avanza al submit válido).
 - [x] La caja del código (fondo `#FBF1D6`, borde dashed `#E6D08A`) es visible desde que abre el modal con código "7K4P9" (Fredoka 34px, tracking 7px, `#8A7234`) y "Vence en 7 días".
@@ -115,6 +116,7 @@ app/
 - **Sí:** código de invitación ficticio constante "7K4P9" y siempre visible (decisión del usuario); la lógica real del código va en otro spec.
 - **Sí:** parentesco requerido, los 3 chips abren deseleccionados (decisión del usuario; el mockup muestra "Mamá" preseleccionada — divergencia decidida y documentada).
 - **Sí:** email con validación de formato mínimo (`/^[^\s@]+@[^\s@]+\.[^\s@]+$/`) además de requerido (decisión del usuario).
+- **Sí (post-implementación, pedido del usuario del 2026-11-10):** el email con formato inválido muestra el aviso al **salir del campo (blur)**, además de al Enviar; los campos vacíos siguen reclamándose solo al Enviar (lo requerido no se delata al recorrer el form).
 - **Sí:** cerrar también con Esc y click en el fondo además de la X: patrón estándar de modales, no contradice el mockup.
 - **No:** agregar el padre a la lista (ni siquiera como PENDIENTE), persistencia, generación real de código o envío de correo: el usuario lo pospuso explícitamente; cada uno va en su propio spec.
 - **No:** los mensajes de validación son una adición deliberada que el mockup no prevé (mismo criterio que SPEC 04).

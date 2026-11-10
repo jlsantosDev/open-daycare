@@ -67,6 +67,15 @@ export function LinkParentModal({ kidName, relationOptions, placeholderInvitatio
     setErrors((current) => (current[field] ? { ...current, [field]: undefined } : current));
   };
 
+  // Feedback temprano (pedido del usuario): un email con formato inválido
+  // delata al salir del campo, sin esperar al Enviar. El requerido sigue
+  // reclamándose al Enviar para no molestar al recorrer el form sin completar.
+  const handleEmailBlur = (event: React.FocusEvent<HTMLInputElement>) => {
+    const email = event.target.value;
+    if (email.trim() === "" || isValidEmail(email)) return;
+    setErrors((current) => ({ ...current, email: "Ingresá un email válido." }));
+  };
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -158,6 +167,7 @@ export function LinkParentModal({ kidName, relationOptions, placeholderInvitatio
             placeholder="correo@ejemplo.com"
             aria-invalid={Boolean(errors.email)}
             onChange={() => clearError("email")}
+            onBlur={handleEmailBlur}
             className={`${fieldClass} mb-[18px] ${errors.email ? "border-accent" : ""}`}
           />
           {errors.email && <p className={`${errorClass} -mt-[12px] mb-[18px]`}>{errors.email}</p>}
