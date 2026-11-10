@@ -127,24 +127,25 @@ app/
 
 ## Criterios de aceptación
 
-- [ ] `npm run dev` renderiza `/` sin errores de build ni de consola, con el feed (header, trigger, 3 posts) idéntico al actual.
-- [ ] La caja "Compartí un momento…" es un `<button>` con la misma visual y abre el modal del mockup: tarjeta `#FBF4EC` máx 580px radio 24px, cabecera Cancelar / "Nueva publicación" (Fredoka 18px/600) / Publicar `#D9583C`, overlay oscuro que oscurece el feed detrás.
-- [ ] La fila PARA muestra 8 chips (uno por niño de `data/kids.ts`) con avatar circular de 26px (inicial sobre `avatarBg`/`avatarText` del niño) más el chip "Toda la sala" sin avatar.
-- [ ] Suma acumulativa: click en Mateo lo selecciona (fondo `#3F362E`, texto blanco); click en Sofía mantiene a Mateo; click sobre Sofía la deselecciona a ella sola y Mateo sigue seleccionado.
-- [ ] Al activar "Toda la sala" se limpia la selección de niños y queda seleccionada; al hacer click en un niño después, "Toda la sala" se desactiva (exclusión bidireccional).
-- [ ] Los 7 chips de TIPO (Comida, Siesta, Actividad, Logro, Ánimo, Foto, Anuncio) abren deseleccionados con los colores de fondo/texto del mockup; elegir uno lo deja seleccionado y elegir otro lo reemplaza.
-- [ ] Publicar con el modal recién abierto (nada elegido, descripción vacía) muestra los 3 mensajes de error (destinatarios, tipo, descripción), no cierra el modal y no agrega tarjeta al feed.
-- [ ] Publicar con destinatarios elegidos muestra solo los mensajes de tipo y descripción (2 errores; el de destinatarios desapareció).
-- [ ] Publicar todo válido con 1 niño cierra el modal y antepone la tarjeta: título "{primer nombre}", avatar con su inicial, audiencia "familia de {nombre}", hora actual `HH:MM`, badge del tipo elegido con sus colores, texto de la descripción y 0 likes / 0 comentarios.
-- [ ] Publicar con 3 niños crea la tarjeta con título "{primero} y 2 más" y audiencia "familias de 3 niños".
-- [ ] Publicar con "Toda la sala" crea la tarjeta "Anuncio general" con icono de megáfono (sin avatar) y audiencia "toda la sala".
-- [ ] Una publicación con un tipo nuevo (ej. Siesta) muestra el badge con el label acentuado correcto ("SIESTA") y los colores asignados (`#E7DCF6`/`#7B5FC0`); los 3 posts existentes siguen mostrando LOGRO/ACTIVIDAD/ANUNCIO sin cambio visual.
-- [ ] Refrescar la página pierde las publicaciones creadas (in-memory) y vuelve al estado de 3 posts.
-- [ ] Cancelar, Esc y click en el fondo cierran el modal sin publicar; la próxima apertura muestra todo limpio (sin selección de ningún niño ni "Toda la sala", tipo deseleccionado, descripción vacía).
-- [ ] La sección FOTOS muestra las dos cajas del mockup (96px sólida con cámara + tile dashed "Agregar" con "+") y el click en "Agregar" no dispara ninguna acción ni abre picker de archivos (es un elemento decorativo, no un input).
-- [ ] En 375px el modal se ve completo con scroll interno, sin overflow horizontal ni errores de consola.
-- [ ] `npm run lint` pasa sin errores y `npx tsc --noEmit` no reporta errores de tipos.
-- [ ] Comparado lado a lado con `references/pantallas/crear-publicacion.dc.html`, no hay diferencias visibles de tipografía, colores ni layout (más las divergencias deliberadas documentadas de estado inicial).
+- [x] `npm run dev` renderiza `/` sin errores de build ni de consola, con el feed (header, trigger, 3 posts) idéntico al actual. *(Verificado con Playwright: consola sin errores, 3 posts con LOGRO/ACTIVIDAD/ANUNCIO; evidencia `.playwright-mcp/06-feed-inicial.png`.)*
+- [x] La caja "Compartí un momento…" es un `<button>` con la misma visual y abre el modal del mockup: tarjeta `#FBF4EC` máx 580px radio 24px, cabecera Cancelar / "Nueva publicación" (Fredoka 18px/600) / Publicar `#D9583C`, overlay oscuro que oscurece el feed detrás. *(Trigger `BUTTON type=button`; computed: max 580px, radio 24px, bg rgb(251,244,236), border rgb(236,224,208), overlay rgba(0,0,0,0.4); evidencia `.playwright-mcp/06-modal-abierto-vacio.png`.)*
+- [x] La fila PARA muestra 8 chips (uno por niño de `data/kids.ts`) con avatar circular de 26px (inicial sobre `avatarBg`/`avatarText` del niño) más el chip "Toda la sala" sin avatar. *(9 chips: 8 con avatar + "Toda la sala"; todos abren en rgb(255,253,249).)*
+- [x] Suma acumulativa: click en Mateo lo selecciona (fondo `#3F362E`, texto blanco); click en Sofía mantiene a Mateo; click sobre Sofía la deselecciona a ella sola y Mateo sigue seleccionado. *(Sofía desel. → solo "Mateo" queda con aria-pressed=true.)*
+- [x] Al activar "Toda la sala" se limpia la selección de niños y queda seleccionada; al hacer click en un niño después, "Toda la sala" se desactiva (exclusión bidireccional). *(Mateo sel. → "Toda la sala" → solo ella; click en Mateo → solo él.)*
+- [x] Los 7 chips de TIPO (Comida, Siesta, Actividad, Logro, Ánimo, Foto, Anuncio) abren deseleccionados con los colores de fondo/texto del mockup; elegir uno lo deja seleccionado y elegir otro lo reemplaza. *(7 chips aria-pressed=false con la paleta exacta; Comida → Anuncio reemplaza.)*
+- [x] Publicar con el modal recién abierto (nada elegido, descripción vacía) muestra los 3 mensajes de error (destinatarios, tipo, descripción), no cierra el modal y no agrega tarjeta al feed. *(Los 3 mensajes exactos del spec; evidencia `.playwright-mcp/06-modal-3-errores.png`.)*
+- [x] Publicar con destinatarios elegidos muestra solo los mensajes de tipo y descripción (2 errores; el de destinatarios desapareció). *(Quedan "Elegí el tipo de publicación." y "Escribí la descripción.".)*
+- [x] Publicar todo válido con 1 niño cierra el modal y antepone la tarjeta: título "{primer nombre}", avatar con su inicial, audiencia "familia de {nombre}", hora actual `HH:MM`, badge del tipo elegido con sus colores, texto de la descripción y 0 likes / 0 comentarios. *(Primera tarjeta: "Mateo", inicial M, 15:20 real, 0/0; nota de auditoría abajo.)*
+  - Nota de verificación (audit): `{nombre}` quedó resuelto como **nombre completo** — la tarjeta muestra "familia de Mateo Fernández", mientras los posts existentes de la data usan primer nombre ("familia de Mateo"). Ambigüedad leve del texto del spec ("{nombre}" vs "{primer nombre}" del título); suggest unificado en un spec futuro si se quiere consistencia visual con los posts viejos.
+- [x] Publicar con 3 niños crea la tarjeta con título "{primero} y 2 más" y audiencia "familias de 3 niños". *("Mateo y 2 más" / "familias de 3 niños".)*
+- [x] Publicar con "Toda la sala" crea la tarjeta "Anuncio general" con icono de megáfono (sin avatar) y audiencia "toda la sala". *(Megáfono presente, sin inicial; evidencia `.playwright-mcp/06-feed-3-posts-nuevos.png`.)*
+- [x] Una publicación con un tipo nuevo (ej. Siesta) muestra el badge con el label acentuado correcto ("SIESTA") y los colores asignados (`#E7DCF6`/`#7B5FC0`); los 3 posts existentes siguen mostrando LOGRO/ACTIVIDAD/ANUNCIO sin cambio visual. *(Pill del badge: rgb(231,220,246) / rgb(123,95,192).)*
+- [x] Refrescar la página pierde las publicaciones creadas (in-memory) y vuelve al estado de 3 posts. *(3 posts tras `goto`.)*
+- [x] Cancelar, Esc y click en el fondo cierran el modal sin publicar; la próxima apertura muestra todo limpio (sin selección de ningún niño ni "Toda la sala", tipo deseleccionado, descripción vacía). *(Cancelar + Esc + click en overlay en x=150 cierran; 0 chips con aria-pressed al reabrir.)*
+- [x] La sección FOTOS muestra las dos cajas del mockup (96px sólida con cámara + tile dashed "Agregar" con "+") y el click en "Agregar" no dispara ninguna acción ni abre picker de archivos (es un elemento decorativo, no un input). *(Tile es DIV 96×96 dashed, 0 `input[type=file]` en el DOM, click no genera acción ni picker.)*
+- [x] En 375px el modal se ve completo con scroll interno, sin overflow horizontal ni errores de consola. *(scrollWidth=clientWidth=375; 0 errores de consola; evidencia `.playwright-mcp/06-modal-375px.png`.)*
+- [x] `npm run lint` pasa sin errores y `npx tsc --noEmit` no reporta errores de tipos. *(`eslint` exit 0; `tsc --noEmit` exit 0 tras instalar deps y regenerar tipos de rutas con `next dev` — nota: en un checkout fresco sin `node_modules`, correr `npm ci` antes de `npx tsc --noEmit`.)*
+- [x] Comparado lado a lado con `references/pantallas/crear-publicacion.dc.html`, no hay diferencias visibles de tipografía, colores ni layout (más las divergencias deliberadas documentadas de estado inicial). *(Mockup renderizado vía HTTP local; evidencia `.playwright-mcp/06-mockup-crear-publicacion.png`; divergencias = las 4 decididas: 8 niños, TIPO sin default, descripción vacía, FOTOS decorativa.)*
 
 ## Decisiones
 
