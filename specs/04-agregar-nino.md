@@ -1,6 +1,6 @@
 # SPEC 04 — Modal "Agregar niño" en /kids (UI + validación)
 
-> **Estado:** Aprobado
+> **Estado:** Implementado
 > **Depende de:** SPEC 02
 > **Fecha:** 2026-11-08
 > **Objetivo:** Implementar el mockup `references/pantallas/agregar-nino.dc.html` como un modal que abre el botón "Agregar niño" de `/kids`, con nombre, fecha de nacimiento (formato dd/mm/aaaa validado como fecha real) y sala requeridos, salas predefinidas y alta del niño en la lista visible, sin backend.

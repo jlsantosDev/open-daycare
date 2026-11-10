@@ -1,6 +1,6 @@
 # SPEC 03 — Pantallas de acceso: Login y Activar cuenta (solo UI)
 
-> **Estado:** Aprobado
+> **Estado:** Implementado
 > **Depende de:** SPEC 01, SPEC 02
 > **Fecha:** 2026-11-08
 > **Objetivo:** Implementar los mockups `references/pantallas/login.dc.html` y `references/pantallas/activar-cuenta.dc.html` como las rutas standalone `/login` y `/activate-account` — únicamente interfaces con data ficticia, sin backend, autenticación ni validación real, y eliminando del login el selector "Ingreso como" (Personal/Familia).
