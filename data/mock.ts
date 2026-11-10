@@ -11,6 +11,17 @@ export const postTypeLabel: Record<PostType, string> = {
   foto: "Foto",
 };
 
+/* Orden de los chips TIPO del modal (mockup crear-publicacion.dc.html) */
+export const postTypeOptions: readonly PostType[] = [
+  "comida",
+  "siesta",
+  "actividad",
+  "logro",
+  "animo",
+  "foto",
+  "anuncio",
+];
+
 export type Post = {
   id: string;
   title: string; // "Mateo" | "Anuncio general"
