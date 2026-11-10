@@ -28,6 +28,6 @@ jobs:
       - name: Run opencode
         uses: anomalyco/opencode/github@latest
         env:
-          OPENDAYCARE_API: ${{ secrets.OPENDAYCARE_API }}
+          OPENCODE_API_KEY: ${{ secrets.OPENDAYCARE_API }}
         with:
           model: opencode-go/glm-5.3-flash
