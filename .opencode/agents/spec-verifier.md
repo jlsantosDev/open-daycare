@@ -1,5 +1,5 @@
 ---
-description: Verifica los criterios de aceptación de un spec en specs/. Marca los checks con evidencia: Context7 para recomendaciones de Next.js, Playwright MCP + visión para pantallas. Solo edita specs.
+description: "Verifica los criterios de aceptación de un spec en specs/. Marca los checks con evidencia: Context7 para recomendaciones de Next.js, Playwright MCP + visión para pantallas. Solo edita specs."
 mode: all
 model: opencode-go/glm-5.3-flash
 color: "#22c55e"
