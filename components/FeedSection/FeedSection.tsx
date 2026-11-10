@@ -1,10 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { kids as allKids } from "@/data/kids";
-import type { Post } from "@/data/mock";
-import { postTypeOptions, posts as initialPosts, user } from "@/data/mock";
-import { NewPostModal } from "@/components/NewPostModal/NewPostModal";
+import { user } from "@/data/mock";
+import { useNewPost } from "@/components/NewPostProvider/NewPostProvider";
 import { PostCard } from "@/components/PostCard/PostCard";
 
 const cameraIcon = (
@@ -15,25 +12,19 @@ const cameraIcon = (
 );
 
 /**
- * Sección del feed dueña del estado de posts (SPEC 06): trigger
- * "Compartí un momento…", separador y listado. El modal se monta solo cuando
- * está abierto → cada apertura arranca limpio por remount (patrón SPEC 04/05).
+ * Sección del feed: trigger "Compartí un momento…", separador y listado.
+ * El estado de posts y el modal viven en <NewPostProvider> (SPEC 06), que
+ * los comparte con el CTA "Nueva publicación" del sidebar; acá se consumen.
  */
 export function FeedSection() {
-  const [posts, setPosts] = useState<Post[]>(initialPosts);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  // Alta in-memory: el post nuevo queda primero de PUBLICADO HOY (SPEC 06).
-  const handlePublish = (post: Post) => {
-    setPosts((current) => [post, ...current]);
-  };
+  const { posts, openNewPost } = useNewPost();
 
   return (
     <>
-      {/* Caja "Compartí un momento…" (link muerto → trigger del modal) */}
+      {/* Caja "Compartí un momento…" → trigger del modal (SPEC 06) */}
       <button
         type="button"
-        onClick={() => setIsModalOpen(true)}
+        onClick={openNewPost}
         className="mb-6 flex w-full cursor-pointer items-center gap-[14px] rounded-[18px] border border-surface-border bg-surface px-[18px] py-[14px] text-left shadow-[0_4px_14px_-10px_rgba(120,90,60,0.4)]"
       >
         <span className="flex h-10 w-10 flex-none items-center justify-center rounded-full bg-avatar-accent font-heading text-base font-semibold text-white">
@@ -57,15 +48,6 @@ export function FeedSection() {
           <PostCard key={post.id} post={post} />
         ))}
       </div>
-
-      {isModalOpen && (
-        <NewPostModal
-          kids={allKids}
-          typeOptions={postTypeOptions}
-          onPublish={handlePublish}
-          onClose={() => setIsModalOpen(false)}
-        />
-      )}
     </>
   );
 }

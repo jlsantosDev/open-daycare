@@ -17,9 +17,9 @@ export function AppShell({
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
 
-  /* Only closes the drawer when the click lands on a nav link. */
+  /* Only closes the drawer when the click lands on an interactive control. */
   const closeDrawerOnNavigate = (event: React.MouseEvent) => {
-    if ((event.target as HTMLElement).closest("a")) {
+    if ((event.target as HTMLElement).closest("a, button")) {
       setMenuOpen(false);
     }
   };
