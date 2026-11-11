@@ -38,6 +38,14 @@ npm run lint   # eslint
 
 - Playwright screenshots y cualquier cosa relacionada a playwright tiene que estar en la carpeta .playwright-mcp.
 - Context7 usaremos este mcp para traer la documentación actualizada del framework.
+- Supabase: disponible para consultar el proyecto (tablas, logs, migraciones, extensiones). Antes de cambiar el schema, inspeccionar las tablas existentes; al depurar, revisar primero logs y avisos de seguridad/rendimiento/salud. El SQL corre directo en la base del proyecto: nunca leer archivos del servidor ni ejecutar comandos de OS vía SQL.
+
+## Supabase
+
+- La capa de datos se planifica sobre Supabase (Postgres), pero **aún no está implementada**: no hay `supabase-js`, CLI ni carpeta `supabase/` en el repo. Los datos actuales son mocks en `data/`.
+- **Esquema de referencia**: `../07-DB-Schema/opendaycare-database-schema.md` (carpeta hermana, fuera del repo) define las tablas, columnas y relaciones a crear. Es solo referencia — nada existe todavía en la base de datos.
+- Variables de entorno: `.env.template` define `SUPBASE_DB_PASSWORD`; el `.env` real no se versiona.
+- Las migraciones aplicadas vía MCP van directo al proyecto remoto: preferir desarrollo local con la CLI de Supabase antes de tocar el proyecto remoto.
 
 ## Specs
 
@@ -50,7 +58,11 @@ npm run lint   # eslint
 
 ## Skills
 
-`skills-lock.json` fija las skills del curso: `spec` y `spec-impl` (flujo de especificación + implementación). Preferirlas al tocar funcionalidad de la app.
+`skills-lock.json` fija las skills instaladas del curso (preferirlas al tocar funcionalidad de la app):
+
+- `spec` y `spec-impl` (klerith/fernando-skills): flujo de especificación + implementación.
+- `supabase` (supabase/agent-skills): usarla en cualquier tarea que involucre Supabase — Database, Auth, Edge Functions, Realtime, Storage, `supabase-js`/`@supabase/ssr`, RLS, CLI o MCP, y debugging del proyecto.
+- `supabase-postgres-best-practices` (supabase/agent-skills): cargarla ANTES de escribir o cambiar cualquier cosa que viva en Postgres (tablas, columnas, RLS, índices, triggers, funciones, migraciones) o al diagnosticar queries lentas, locks o problemas de seguridad en la base.
 
 ## Reglas de código
 
