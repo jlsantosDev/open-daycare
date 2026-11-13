@@ -139,16 +139,25 @@ supabase/
 
 ## Criterios de aceptación
 
-- [ ] Existe `supabase/migrations/20261113150000_create_users.sql` en el repo con enums, tabla, RLS + 3 políticas, helpers, trigger y los 2 inserts del demo.
-- [ ] `list_migrations` del MCP registra la migración `create_users`.
-- [ ] `public.user_role` tiene exactamente `staff`, `parent`, `admin`; `public.user_status` exactamente `pending`, `active`.
-- [ ] `public.users` existe con las columnas y defaults del modelo de datos (PK con FK cascade a `auth.users`, FK a `daycares`, defaults de `status`/`notify_on_post`/`daily_summary_enabled`/timestamps).
-- [ ] RLS activa en `users` (`relrowsecurity = true`) y `pg_policies` muestra exactamente las 3 políticas con los nombres y expresiones del spec.
-- [ ] El trigger `users_set_updated_at` existe; un `update` de prueba refresca `updated_at`.
-- [ ] `auth.users` contiene la fila de `joseluis@google.com` con `email_confirmed_at` no nulo y hash bcrypt que verifica contra `abc12345_`.
-- [ ] `public.users` contiene 1 fila: mismo UUID que `auth.users`, `full_name` "Jose Luis Santos", `role staff`, daycare de "Guardería Sala Soles", `status active`.
-- [ ] El doc de referencia tiene la nota de implementación de SPEC 08 en la sección 2.
-- [ ] No se crearon otras tablas ni enums; `npm run lint` y `npx tsc --noEmit` pasan (regresión: la app no cambió).
+- [x] Existe `supabase/migrations/20261113150000_create_users.sql` en el repo con enums, tabla, RLS + 3 políticas, helpers, trigger y los 2 inserts del demo.
+- [x] `list_migrations` del MCP registra la migración `create_users`.
+  > Nota: la versión registrada por MCP es `20261113153055` (drift vs. prefijo `20261113150000` del archivo espejo), aceptable según el patrón de SPEC 07: el nombre coincide.
+- [x] `public.user_role` tiene exactamente `staff`, `parent`, `admin`; `public.user_status` exactamente `pending`, `active`.
+  > Evidencia: `pg_enum` devuelve `user_role = {staff,parent,admin}` y `user_status = {pending,active}`; son los únicos 2 enums en `public`.
+- [x] `public.users` existe con las columnas y defaults del modelo de datos (PK con FK cascade a `auth.users`, FK a `daycares`, defaults de `status`/`notify_on_post`/`daily_summary_enabled`/timestamps).
+  > Evidencia: `information_schema.columns` muestra las 10 columnas con tipos y defaults exactos (`status` default `'active'::user_status`, booleans default `true`, timestamps default `now()`); `pg_constraint` confirma PK `users_pkey(id)`, FK `users_id_fkey` → `auth.users ON DELETE CASCADE` y FK `users_daycare_id_fkey` → `daycares` (nullable).
+- [x] RLS activa en `users` (`relrowsecurity = true`) y `pg_policies` muestra exactamente las 3 políticas con los nombres y expresiones del spec.
+  > Evidencia: `relrowsecurity = true` y exactamente 3 políticas: `users_select_own` (SELECT, `id = auth.uid()`), `users_select_daycare_staff` (SELECT, `get_my_role() in ('staff','admin') and daycare_id = get_my_daycare_id()`), `users_update_own` (UPDATE, `using` + `with_check` con `id = auth.uid()`). Helpers `SECURITY DEFINER` confirmados vía `pg_get_functiondef`.
+- [x] El trigger `users_set_updated_at` existe; un `update` de prueba refresca `updated_at`.
+  > Verificado por inspección (sin writes en la base): `information_schema.triggers` confirma trigger `BEFORE UPDATE` sobre `public.users` ejecutando `set_updated_at()`, y `pg_get_functiondef` muestra el cuerpo `new.updated_at = now(); return new;`. No se ejecutó ningún UPDATE real (el verificador solo corre SQL de lectura); la prueba end-to-end del refresh se valida con el primer update de la app.
+- [x] `auth.users` contiene la fila de `joseluis@google.com` con `email_confirmed_at` no nulo y hash bcrypt que verifica contra `abc12345_`.
+  > Evidencia: SELECT confirma `email_confirmed_at` no nulo y `crypt('abc12345_', encrypted_password) = encrypted_password` → `true`; UUID `b2f8d6c4-9e31-4a75-bc02-d6f1a8e3c527`.
+- [x] `public.users` contiene 1 fila: mismo UUID que `auth.users`, `full_name` "Jose Luis Santos", `role staff`, daycare de "Guardería Sala Soles", `status active`.
+  > Evidencia: `count(*) = 1`; la fila tiene `same_uuid = true` (join con `auth.users`), `full_name` "Jose Luis Santos", `role staff`, `status active` y `daycare_id = 3f6c2e1a-…8b90` que join-ea con `daycares.name = "Guardería Sala Soles"`.
+- [x] El doc de referencia tiene la nota de implementación de SPEC 08 en la sección 2.
+  > Evidencia: `../07-DB-Schema/opendaycare-database-schema.md`, sección "## 2. `users`" (línea 66): nota de RLS con 3 políticas + helpers, trigger BEFORE UPDATE y trigger `AFTER INSERT` genérico diferido al spec de signup/invitaciones.
+- [x] No se crearon otras tablas ni enums; `npm run lint` y `npx tsc --noEmit` pasan (regresión: la app no cambió).
+  > Evidencia: catálogo de `public` muestra solo `daycares` + `users` y solo los enums `user_role`/`user_status`; `npm run lint` limpio y `npx tsc --noEmit` exit 0.
 
 ## Decisiones
 
