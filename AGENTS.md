@@ -38,13 +38,14 @@ npm run lint   # eslint
 
 - Playwright screenshots y cualquier cosa relacionada a playwright tiene que estar en la carpeta .playwright-mcp.
 - Context7 usaremos este mcp para traer la documentación actualizada del framework.
-- Supabase: disponible para consultar el proyecto (tablas, logs, migraciones, extensiones). Antes de cambiar el schema, inspeccionar las tablas existentes; al depurar, revisar primero logs y avisos de seguridad/rendimiento/salud. El SQL corre directo en la base del proyecto: nunca leer archivos del servidor ni ejecutar comandos de OS vía SQL.
+- Supabase: disponible para consultar el proyecto (tablas, logs, migraciones, extensiones). Antes de cambiar el schema, inspeccionar las tablas existentes; al depurar, revisar primero logs y avisos de seguridad/rendimiento/salud. El SQL corre directo en la base del proyecto: nunca leer archivos del servidor ni ejecutar comandos de OS vía SQL. Los cambios de schema por MCP solo como último recurso y siempre respaldados por un archivo de migración en el repo (ver regla de migraciones en la sección Supabase).
 
 ## Supabase
 
 - La capa de datos se planifica sobre Supabase (Postgres), pero **aún no está implementada**: no hay `supabase-js`, CLI ni carpeta `supabase/` en el repo. Los datos actuales son mocks en `data/`.
 - **Esquema de referencia**: `../07-DB-Schema/opendaycare-database-schema.md` (carpeta hermana, fuera del repo) define las tablas, columnas y relaciones a crear. Es solo referencia — nada existe todavía en la base de datos.
 - Variables de entorno: `.env.template` define `SUPBASE_DB_PASSWORD`; el `.env` real no se versiona.
+- **Toda manipulación de la base de datos se hace SIEMPRE con migraciones**: cualquier cambio de schema (tablas, columnas, RLS, índices, triggers, funciones, extensiones) debe escribirse como un archivo de migración en `supabase/migrations/` (formato `YYYYMMDDHHMMSS_slug.sql`) y aplicarse con la CLI (`supabase db push` local / `supabase migration up` remoto). Nunca alterar la base con SQL suelto ad-hoc, ni directa ni vía MCP; el SQL por MCP solo para lectura/depuración (selects, logs, checks).
 - Las migraciones aplicadas vía MCP van directo al proyecto remoto: preferir desarrollo local con la CLI de Supabase antes de tocar el proyecto remoto.
 
 ## Specs
