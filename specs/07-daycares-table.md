@@ -1,6 +1,6 @@
 # SPEC 07 — Tabla `daycares` en Supabase (migración + RLS + seed de 4 guarderías)
 
-> **Estado:** Arpobado
+> **Estado:** Implementado
 > **Depende de:** ninguno (primer spec de base de datos)
 > **Fecha:** 2026-11-13
 > **Objetivo:** Crear la tabla `daycares` en el proyecto Supabase remoto mediante el patrón de migraciones (archivo SQL versionado en el repo, aplicado vía MCP), con RLS activa sin políticas y 4 guarderías de ejemplo con "Guardería Sala Soles" como principal.
@@ -82,14 +82,24 @@ supabase/
 
 ## Criterios de aceptación
 
-- [ ] Existe `supabase/migrations/20261113120000_create_daycares.sql` en el repo con el DDL, la activación de RLS y los 4 inserts.
-- [ ] La migración `create_daycares` aparece en el historial de migraciones del proyecto Supabase (vía `list_migrations` del MCP).
-- [ ] La tabla `public.daycares` existe en el remoto con exactamente: `id uuid` PK default `gen_random_uuid()`, `name text NOT NULL`, `address text NOT NULL`, `created_at timestamptz NOT NULL default now()`.
-- [ ] RLS está activa en `daycares` (`relrowsecurity = true`) y `pg_policies` no registra ninguna política para la tabla.
-- [ ] `select * from public.daycares` devuelve exactamente 4 filas; la primera es "Guardería Sala Soles" y las 4 tienen `address` no vacía.
-- [ ] No se crearon enums, extensiones ni otras tablas; los archivos de `app/`, `components/` y `data/` están sin cambios.
-- [ ] El doc de referencia `../07-DB-Schema/opendaycare-database-schema.md` incluye `address text NOT NULL` en `daycares`.
-- [ ] `npm run lint` y `npx tsc --noEmit` pasan (regresión: nada de la app se rompió).
+Verificado el 2026-11-13 por spec-verifier. Evidencia bajo cada check.
+
+- [x] Existe `supabase/migrations/20261113120000_create_daycares.sql` en el repo con el DDL, la activación de RLS y los 4 inserts.
+  - *Evidencia:* leído el archivo (21 líneas): `create table public.daycares` (id/name/address/created_at), `alter table ... enable row level security`, y los 4 inserts con los mismos UUIDs, nombres y direcciones del SQL esperado.
+- [x] La migración `create_daycares` aparece en el historial de migraciones del proyecto Supabase (vía `list_migrations` del MCP).
+  - *Evidencia:* `list_migrations` → `[{ "version": "20261113104726", "name": "create_daycares" }]`. Nota: la versión registrada por MCP es `20261113104726`, distinta del prefijo del archivo espejo (`20261113120000`); el nombre coincide. Sin impacto, se concilia con el drift documentado en Riesgos.
+- [x] La tabla `public.daycares` existe en el remoto con exactamente: `id uuid` PK default `gen_random_uuid()`, `name text NOT NULL`, `address text NOT NULL`, `created_at timestamptz NOT NULL default now()`.
+  - *Evidencia:* `information_schema.columns` → `id uuid NO gen_random_uuid()`, `name text NO`, `address text NO`, `created_at timestamp with time zone NO now()`. Exactamente 4 columnas, sin `updated_at` ni extras.
+- [x] RLS está activa en `daycares` (`relrowsecurity = true`) y `pg_policies` no registra ninguna política para la tabla.
+  - *Evidencia:* `pg_class` → `relrowsecurity = true`; `pg_policies` para `daycares` → `[]` (cero políticas).
+- [x] `select * from public.daycares` devuelve exactamente 4 filas; la primera es "Guardería Sala Soles" y las 4 tienen `address` no vacía.
+  - *Evidencia:* `select *` (sin order by) devuelve 4 filas en orden de inserción, primera `3f6c2e1a-…` "Guardería Sala Soles"; `count(*) = 4`, `with_address = 4`, `with_name = 4`.
+- [x] No se crearon enums, extensiones ni otras tablas; los archivos de `app/`, `components/` y `data/` están sin cambios.
+  - *Evidencia:* `pg_tables` en `public` → solo `daycares`; enums (`typtype='e'`) en `public` → `[]`; `pg_extension` → solo las 5 preinstaladas por Supabase (`pg_stat_statements`, `pgcrypto`, `plpgsql`, `supabase_vault`, `uuid-ossp`), ninguna creada por la migración (el SQL no tiene `create extension`). `git status --porcelain` vacío y `git ls-files --others -- app components data` sin archivos.
+- [x] El doc de referencia `../07-DB-Schema/opendaycare-database-schema.md` incluye `address text NOT NULL` en `daycares`.
+  - *Evidencia:* sección 1 `daycares`, línea: `` | `address` | `text` | NOT NULL (agregado en SPEC 07). | ``.
+- [x] `npm run lint` y `npx tsc --noEmit` pasan (regresión: nada de la app se rompió).
+  - *Evidencia:* `npm run lint` → exit 0 sin salida; `npx tsc --noEmit` → exit 0 sin errores.
 
 ## Decisiones
 
