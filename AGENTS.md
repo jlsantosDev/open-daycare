@@ -51,6 +51,7 @@ npm run lint   # eslint
 ## Specs
 
 - Los specs viven en `specs/` con formato `NN-slug.md`; su sección "Criterios de aceptación" usa checks `- [ ]` / `- [x]`.
+- Todo spec relacionado con la base de datos (tablas, columnas, RLS, índices, migraciones, triggers, funciones) va en `specs/database/`, siguiendo el mismo formato `NN-slug.md`.
 
 ## Agentes y comandos
 
